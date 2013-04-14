@@ -1,0 +1,30 @@
+{
+    "name": "anis/zf2-doctrine-crud",
+    "description": "Provides you an easy way to link your Doctrine Entities with Zend Framework 2's form library into CRUD actions.",
+    "type" : "library",
+    "license": "New BSD License",
+    "keywords" : [
+        "doctrine",
+        "zf2",
+        "module",
+        "crud"
+    ],
+    "homepage" : "http://github.com/anis/zf2-doctrine-crud",
+    "authors": [
+        {
+            "name": "Anis Safine",
+            "email": "anis@safine.me",
+            "homepage" : "http://anis.pro"
+        }
+    ],
+    "require": {
+        "zendframework/zendframework" : "2.2.*",
+        "doctrine/doctrine-module" : "dev-master"
+    },
+    "minimum-stability": "dev",
+    "autoload" : {
+        "psr-0" : {
+            "DoctrineCRUD\\" : "src/"
+        }
+    }
+}
