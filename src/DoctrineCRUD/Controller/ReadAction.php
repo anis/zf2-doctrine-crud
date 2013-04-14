@@ -30,24 +30,9 @@ trait ReadAction
      */
     public function readAction()
     {
-        // List all the fields to be displayed : all fields except the relations
-        $fields = array();
-
-        $metadata = $this->getEM()->getClassMetadata($this->getEntityClass());
-        foreach ($metadata->getFieldNames() as $fieldName) {
-            if ($metadata->hasAssociation($fieldName)) {
-                continue;
-            }
-
-            if ($metadata->isIdentifier($fieldName)) {
-                array_unshift($fields, $fieldName);
-            } else {
-                array_push($fields, $fieldName);
-            }
-        }
-
         // Collect the data into a simple array
         $data = array();
+        $fields = $this->displayableFields();
         foreach ($this->getEM()->getRepository($this->getEntityClass())->findAll() as $entity) {
             $row = array();
             foreach ($fields as $fieldName) {
@@ -60,5 +45,34 @@ trait ReadAction
         return array(
             'entities' => $data,
         );
+    }
+
+    /**
+     * Gets the ordered list of fields to be displayed
+     *
+     * If not overriden, this method will return all fields that are not associations, identifiers first.
+     *
+     * @return array The name of all displayable fields, in the order they should be displayed
+     */
+    protected function displayableFields()
+    {
+        $fields = array();
+
+        $metadata = $this->getEM()->getClassMetadata($this->getEntityClass());
+        foreach ($metadata->getFieldNames() as $fieldName) {
+            // Exclude association fields
+            if ($metadata->hasAssociation($fieldName)) {
+                continue;
+            }
+
+            // Put identifiers on top of the list
+            if ($metadata->isIdentifier($fieldName)) {
+                array_unshift($fields, $fieldName);
+            } else {
+                array_push($fields, $fieldName);
+            }
+        }
+
+        return $fields;
     }
 }
