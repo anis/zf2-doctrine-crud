@@ -43,6 +43,7 @@ trait ReadAction
         }
 
         return array(
+            'fields'   => array_map(array($this, 'formatName'), $fields),
             'entities' => $data,
         );
     }

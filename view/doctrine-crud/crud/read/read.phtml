@@ -2,7 +2,7 @@
 <table class="table table-bordered table-striped">
     <thead>
         <tr>
-        <?php foreach (array_keys($this->entities[0]) as $fieldName): ?>
+        <?php foreach ($this->fields as $fieldName): ?>
             <th><?php echo $fieldName; ?></th>
         <?php endforeach; ?>
         </tr>
