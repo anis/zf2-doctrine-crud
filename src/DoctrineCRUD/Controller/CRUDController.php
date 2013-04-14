@@ -21,6 +21,8 @@ use Zend\Mvc\Controller\AbstractActionController;
  */
 abstract class CRUDController extends AbstractActionController
 {
+    use ReadAction;
+
     /**
      * Returns the name of the entity class this controller is related to
      *

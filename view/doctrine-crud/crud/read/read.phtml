@@ -1,0 +1,23 @@
+<?php if (count($this->entities) > 0): ?>
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+        <?php foreach (array_keys($this->entities[0]) as $fieldName): ?>
+            <th><?php echo $fieldName; ?></th>
+        <?php endforeach; ?>
+        </tr>
+    </thead>
+
+    <tbody>
+        <?php foreach ($this->entities as $entity): ?>
+        <tr>
+            <?php foreach ($entity as $value): ?>
+            <td><?php echo $value; ?></td>
+            <?php endforeach; ?>
+        </tr>
+        <?php endforeach; ?>
+    </tbody>
+</table>
+<?php else: ?>
+<p><?php echo $this->translate('There is nothing yet in the database!'); ?></p>
+<?php endif; ?>
