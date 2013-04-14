@@ -30,6 +30,22 @@ class Module
     }
 
     /**
+     * Returns the autoloader configuration
+     *
+     * @return array
+     */
+    public function getAutoloaderConfig()
+    {
+        return array(
+            'Zend\Loader\StandardAutoloader' => array(
+                'namespaces' => array(
+                    __NAMESPACE__ => __DIR__ . '/src/' . __NAMESPACE__
+                ),
+            ),
+        );
+    }
+
+    /**
      * Bootstraps the module
      *
      * Basically, it's here to attach our listeners on important ZF2 events.
