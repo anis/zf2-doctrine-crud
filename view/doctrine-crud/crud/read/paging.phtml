@@ -1,0 +1,23 @@
+<?php if ($this->totalPages > 1): ?>
+<div class="pagination">
+    <ul>
+    <?php for ($i = 1; $i <= $this->totalPages; $i++): ?>
+        <?php if ($i === 1): ?>
+        <li<?php if ($this->currentPage === $i): ?> class="disabled"<?php endif; ?>>
+            <a href="<?php echo $this->page($i); ?>">&laquo;</a>
+        </li>
+        <?php endif; ?>
+
+        <li<?php if ($i === $this->currentPage): ?> class="active"<?php endif; ?>>
+            <a href="<?php echo $i !== $this->currentPage ? $this->page($i) : '#'; ?>"><?php echo $i; ?></a>
+        </li>
+
+        <?php if ($i === $this->totalPages): ?>
+        <li<?php if ($this->currentPage === $i): ?> class="disabled"<?php endif; ?>>
+            <a href="<?php echo $this->page($i); ?>">&raquo;</a>
+        </li>
+        <?php endif; ?>
+    <?php endfor; ?>
+    </ul>
+</div>
+<?php endif; ?>

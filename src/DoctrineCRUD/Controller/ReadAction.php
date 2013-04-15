@@ -2,7 +2,7 @@
 /**
  * Read action
  *
- * Provides methods to read the entries of a specific entity.
+ * Provides methods to read the entries of a specific entity with a paging feature.
  * This trait is expected to be used by \DoctrineCRUD\Controller\CRUDController.
  *
  * PHP Version 5.4.13
@@ -21,19 +21,67 @@ namespace DoctrineCRUD\Controller;
 trait ReadAction
 {
     /**
+     * Number of entities per page
+     *
+     * Zero or lower to deactivate paging (every entities will be displayed)
+     *
+     * @var integer
+     */
+    protected $entitiesPerPage = 10;
+
+    /**
      * Read action
      *
-     * Retrieves and passes to the view all existing entities.
+     * Retrieves and passes to the view the appropriate entities, depending on the paging configuration.
      *
      * @return array Variables to be passed to the view :
-     *               "entities" array List of retrieves entities
+     *               "currentPage" integer Index of current page (starting from 1)
+     *               "totalPages"  integer Total number of pages
+     *               "fields"      array   List of formatted field names
+     *               "entities"    array   List of retrieves entities
      */
     public function readAction()
     {
-        // Collect the data into a simple array
-        $data = array();
+        // Determine the total number of pages
         $fields = $this->displayableFields();
-        foreach ($this->getEM()->getRepository($this->getEntityClass())->findAll() as $entity) {
+        $countRequest = 'SELECT COUNT(e.'.$fields[0].') FROM '.$this->getEntityClass().' e';
+        $count = $this->getEM()->createQuery($countRequest)->getSingleScalarResult();
+
+        if ($this->entitiesPerPage > 0 && $count > 0) {
+            $totalPages = intval(ceil($count / $this->entitiesPerPage));
+        } else {
+            $totalPages = 1;
+        }
+
+        // Determine which page to display
+        $currentPage = $this->requestedPage();
+        if ($currentPage === null) {
+            $currentPage = 1;
+        } elseif ($currentPage < 1) {
+            $currentPage = 1;
+        } elseif ($currentPage > $totalPages) {
+            $currentPage = $totalPages;
+        }
+
+        // Finally, determine the appropriate limit and offset
+        if ($this->entitiesPerPage > 0) {
+            $limit = $this->entitiesPerPage;
+        } else {
+            $limit = $count;
+        }
+
+        $offset = ($currentPage - 1) * $limit;
+
+        // Collect the data into a simple array
+        $entities = $this->getEM()->getRepository($this->getEntityClass())->findBy(
+            array(),
+            null,
+            $limit,
+            $offset
+        );
+
+        $data = array();
+        foreach ($entities as $entity) {
             $row = array();
             foreach ($fields as $fieldName) {
                 $row[$fieldName] = call_user_func(array($entity, 'get'.$fieldName));
@@ -42,9 +90,12 @@ trait ReadAction
             array_push($data, $row);
         }
 
+        // Return the data to the view
         return array(
+            'currentPage' => $currentPage,
+            'totalPages' => $totalPages,
             'fields'   => array_map(array($this, 'formatName'), $fields),
-            'entities' => $data,
+            'entities' => $data
         );
     }
 
@@ -75,5 +126,37 @@ trait ReadAction
         }
 
         return $fields;
+    }
+
+    /**
+     * Gets the index of the requested page (starting from 1)
+     *
+     * If not overriden, this method will check for a variable named "page" in the "route", "query" and "post"
+     * parameters (and in that exact order).
+     *
+     * @return integer|null Index of the requested page if any, null otherwise
+     */
+    protected function requestedPage()
+    {
+        // Is it in the route?
+        $page = intval($this->params()->fromRoute('page', null));
+        if ($page > 0) {
+            return $page;
+        }
+
+        // Is it in the query?
+        $page = intval($this->params()->fromQuery('page', null));
+        if ($page > 0) {
+            return $page;
+        }
+
+        // Is it posted?
+        $page = intval($this->params()->fromPost('page', null));
+        if ($page > 0) {
+            return $page;
+        }
+
+        // No page was requested
+        return null;
     }
 }

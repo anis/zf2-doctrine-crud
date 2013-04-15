@@ -1,4 +1,10 @@
 <?php if (count($this->entities) > 0): ?>
+<?php
+echo $this->partial(
+    'doctrine-crud/crud/read/paging',
+    array('currentPage' => $this->currentPage, 'totalPages' => $this->totalPages)
+);
+?>
 <table class="table table-bordered table-striped">
     <thead>
         <tr>
@@ -18,6 +24,12 @@
         <?php endforeach; ?>
     </tbody>
 </table>
+<?php
+echo $this->partial(
+    'doctrine-crud/crud/read/paging',
+    array('currentPage' => $this->currentPage, 'totalPages' => $this->totalPages)
+);
+?>
 <?php else: ?>
 <p><?php echo $this->translate('There is nothing yet in the database!'); ?></p>
 <?php endif; ?>
