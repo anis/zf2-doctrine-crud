@@ -70,6 +70,11 @@ class Module
      */
     public function setDefaultTemplate(MvcEvent $e)
     {
+        // Ensure a route matched
+        if ($e->getRouteMatch() === null) {
+            return;
+        }
+
         // Resolve the name of matched controller
         $matchedController = $e->getRouteMatch()->getParam('controller');
 
