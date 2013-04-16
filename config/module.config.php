@@ -18,7 +18,7 @@ return array(
 
     'view_helpers' => array(
         'factories' => array(
-            'page' => function($sm) {
+            'readPage' => function($sm) {
                 $helper = new View\Helper\UrlHelper();
                 return $helper->setServiceLocator($sm->getServiceLocator());
             },
