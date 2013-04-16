@@ -56,18 +56,23 @@ class UrlHelper extends AbstractHelper implements ServiceLocatorAwareInterface
      */
     public function __invoke($page)
     {
+        // Get some tools
         $plugins = $this->getServiceLocator()->get('ControllerPluginManager');
         $routeMatch = $this->getServiceLocator()->get('application')->getMvcEvent()->getRouteMatch();
 
-        return $plugins->get('url')->fromRoute(
-            $routeMatch->getMatchedRouteName(),
-            $routeMatch->getParams(),
-            array(
-                'query' => array_merge(
-                    $plugins->get('params')->fromQuery(),
-                    array('page' => $page)
-                ),
-            )
+        // Build the appropriate params and options
+        $params = $routeMatch->getParams();
+        $options = array(
+            'query' => $plugins->get('params')->fromQuery(),
         );
+
+        if (array_key_exists('page', $params)) {
+            $params['page'] = $page;
+        } else {
+            $options['query']['page'] = $page;
+        }
+
+        // Generate the URL
+        return $plugins->get('url')->fromRoute($routeMatch->getMatchedRouteName(), $params, $options);
     }
 }
