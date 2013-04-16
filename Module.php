@@ -1,6 +1,6 @@
 <?php
 /**
- * CRUD actions module for Doctrine entities on Zend Framework 2
+ * CRUD actions module for Doctrine entities
  *
  * PHP Version 5.4.13
  *
@@ -12,7 +12,7 @@ namespace DoctrineCRUD;
 use Zend\Mvc\MvcEvent;
 
 /**
- * CRUD actions module for Doctrine entities on Zend Framework 2
+ * CRUD actions module for Doctrine entities
  *
  * @author  Anis Safine <anis@safine.me>
  * @license http://framework.zend.com/license/new-bsd New BSD License

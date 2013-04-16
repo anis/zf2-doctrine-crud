@@ -1,4 +1,4 @@
-CRUD actions generator for Doctrine 2 entities on Zend Framework 2
+CRUD actions provider for Doctrine 2 entities on Zend Framework 2
 =================
 
 License
