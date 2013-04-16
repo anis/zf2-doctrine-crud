@@ -1,35 +1,33 @@
+<div class="row">
 <?php if (count($this->entities) > 0): ?>
-<?php
-echo $this->partial(
-    'doctrine-crud/crud/read/paging',
-    array('currentPage' => $this->currentPage, 'totalPages' => $this->totalPages)
-);
-?>
-<table class="table table-bordered table-striped">
-    <thead>
-        <tr>
-        <?php foreach ($this->fields as $fieldName): ?>
-            <th><?php echo $fieldName; ?></th>
-        <?php endforeach; ?>
-        </tr>
-    </thead>
+    <?php echo $this->partial('doctrine-crud/crud/read/paging', array('currentPage' => $this->currentPage, 'totalPages' => $this->totalPages)); ?>
 
-    <tbody>
-        <?php foreach ($this->entities as $entity): ?>
-        <tr>
-            <?php foreach ($entity as $value): ?>
-            <td><?php echo $value; ?></td>
-            <?php endforeach; ?>
-        </tr>
-        <?php endforeach; ?>
-    </tbody>
-</table>
-<?php
-echo $this->partial(
-    'doctrine-crud/crud/read/paging',
-    array('currentPage' => $this->currentPage, 'totalPages' => $this->totalPages)
-);
-?>
+    <div class="span12">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                <?php foreach ($this->fields as $fieldName): ?>
+                    <th><?php echo $fieldName; ?></th>
+                <?php endforeach; ?>
+                </tr>
+            </thead>
+
+            <tbody>
+                <?php foreach ($this->entities as $entity): ?>
+                <tr>
+                    <?php foreach ($entity as $value): ?>
+                    <td><?php echo $value; ?></td>
+                    <?php endforeach; ?>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+
+    <?php echo $this->partial('doctrine-crud/crud/read/paging', array('currentPage' => $this->currentPage, 'totalPages' => $this->totalPages)); ?>
 <?php else: ?>
-<p><?php echo $this->translate('There is nothing yet in the database!'); ?></p>
+    <div class="span12">
+        <p><?php echo $this->translate('There is nothing yet in the database!'); ?></p>
+    </div>
 <?php endif; ?>
+</div>
