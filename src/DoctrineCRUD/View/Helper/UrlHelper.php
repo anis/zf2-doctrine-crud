@@ -50,11 +50,13 @@ class UrlHelper extends AbstractHelper implements ServiceLocatorAwareInterface
     /**
      * Edits current route match with the given parameters and returns the corresponding URL
      *
-     * @param integer $page Page index (starting from 1)
+     * @param integer $page      Page index (starting from 1)
+     * @param string  $sortBy    (Optional) Sorting field name
+     * @param string  $sortOrder (Optional) Sorting order, must value either "asc" (default) or "desc"
      *
      * @return string
      */
-    public function __invoke($page)
+    public function __invoke($page, $sortBy = null, $sortOrder = 'asc')
     {
         // Get some tools
         $plugins = $this->getServiceLocator()->get('ControllerPluginManager');
@@ -70,6 +72,20 @@ class UrlHelper extends AbstractHelper implements ServiceLocatorAwareInterface
             $params['page'] = $page;
         } else {
             $options['query']['page'] = $page;
+        }
+
+        if (is_string($sortBy)) {
+            if (!in_array($sortOrder, array('asc', 'desc'))) {
+                $sortOrder = 'asc';
+            }
+
+            if (array_key_exists('sortBy', $params)) {
+                $params['sortBy'] = $sortBy;
+                $params['sortOrder'] = $sortOrder;
+            } else {
+                $options['query']['sortBy'] = $sortBy;
+                $options['query']['sortOrder'] = $sortOrder;
+            }
         }
 
         // Generate the URL

@@ -72,10 +72,17 @@ trait ReadAction
 
         $offset = ($currentPage - 1) * $limit;
 
+        // Determine the sorting parameters
+        $requested = $this->requestedSorting();
+        $sorting = array();
+        if ($requested !== null && in_array($requested['by'], $this->sortableFields())) {
+            $sorting[$requested['by']] = $requested['order'];
+        }
+
         // Collect the data into a simple array
         $entities = $this->getEM()->getRepository($this->getEntityClass())->findBy(
             array(),
-            null,
+            $sorting,
             $limit,
             $offset
         );
@@ -94,7 +101,9 @@ trait ReadAction
         return array(
             'currentPage' => $currentPage,
             'totalPages' => $totalPages,
-            'fields'   => array_map(array($this, 'formatName'), $fields),
+            'fields'   => array_combine($fields, array_map(array($this, 'formatName'), $fields)),
+            'sortableFields' => $this->sortableFields(),
+            'currentSorting' => $sorting,
             'entities' => $data
         );
     }
@@ -105,6 +114,8 @@ trait ReadAction
      * If not overriden, this method will return all fields that are not associations, identifiers first.
      *
      * @return array The name of all displayable fields, in the order they should be displayed
+     *
+     * @todo cache the result to improve execution performances
      */
     protected function displayableFields()
     {
@@ -126,6 +137,18 @@ trait ReadAction
         }
 
         return $fields;
+    }
+
+    /**
+     * Gets the list of fields usable for sorting
+     *
+     * If not overriden, this method will return all displayable fields
+     *
+     * @return array The name of all sortable fields
+     */
+    protected function sortableFields()
+    {
+        return $this->displayableFields();
     }
 
     /**
@@ -157,6 +180,68 @@ trait ReadAction
         }
 
         // No page was requested
+        return null;
+    }
+
+    /**
+     * Gets the field and order of the requested sorting (if any)
+     *
+     * If not overriden, this method will check for two variables named "sortBy" and "sortOrder" in the "route",
+     * "query", and "post" parameters (in that exact order).
+     * The variables "sortBy" should contain a field name, and "sortOrder" should contain either "asc" or "desc"
+     *
+     * @return array|null An array with two keys "by" and "order" if any sorting was requested, any otherwise
+     */
+    protected function requestedSorting()
+    {
+        $sort = array('by' => null, 'order' => null);
+
+        // Is it in the route?
+        $sort['by'] = $this->params()->fromRoute('sortBy', null);
+        $sort['order'] = trim(strtolower($this->params()->fromRoute('sortOrder', null)));
+        if (!in_array($sort['order'], array('asc', 'desc'))) {
+            $sort['order'] = null;
+        }
+
+        if ($sort['by'] !== null && $sort['order'] !== null) {
+            return $sort;
+        }
+
+        // Is it in the query?
+        if ($sort['by'] === null) {
+            $sort['by'] = $this->params()->fromQuery('sortBy', null);
+        }
+
+        if ($sort['order'] === null) {
+            $sort['order'] = trim(strtolower($this->params()->fromQuery('sortOrder', null)));
+
+            if (!in_array($sort['order'], array('asc', 'desc'))) {
+                $sort['order'] = null;
+            }
+        }
+
+        if ($sort['by'] !== null && $sort['order'] !== null) {
+            return $sort;
+        }
+
+        // Is it posted?
+        if ($sort['by'] === null) {
+            $sort['by'] = $this->params()->fromPost('sortBy', null);
+        }
+
+        if ($sort['order'] === null) {
+            $sort['order'] = strtolower(trim($this->params()->fromPost('sortOrder', null)));
+
+            if (!in_array($sort['order'], array('asc', 'desc'))) {
+                $sort['order'] = null;
+            }
+        }
+
+        if ($sort['by'] !== null && $sort['order'] !== null) {
+            return $sort;
+        }
+
+        // No sorting was requested
         return null;
     }
 }

@@ -1,13 +1,29 @@
 <div class="row">
 <?php if (count($this->entities) > 0): ?>
-    <?php echo $this->partial('doctrine-crud/crud/read/paging', array('currentPage' => $this->currentPage, 'totalPages' => $this->totalPages)); ?>
+    <?php
+    echo $this->partial('doctrine-crud/crud/read/paging', array('currentPage' => $this->currentPage, 'totalPages' => $this->totalPages));
+    ?>
 
     <div class="span12">
         <table class="table table-bordered table-striped">
             <thead>
                 <tr>
-                <?php foreach ($this->fields as $fieldName): ?>
-                    <th><?php echo $fieldName; ?></th>
+                <?php foreach ($this->fields as $fieldName => $label): ?>
+                    <th>
+                        <?php
+                            $sortable = in_array($fieldName, $this->sortableFields);
+                            $sortOrder = array_key_exists($fieldName, $this->currentSorting) && $this->currentSorting[$fieldName] === 'asc'
+                                ? 'desc'
+                                : 'asc';
+                        ?>
+                        <?php if ($sortable): ?>
+                            <a href="<?php echo $this->readPage($this->currentPage, $fieldName, $sortOrder); ?>">
+                        <?php endif; ?>
+                        <?php echo $label; ?>
+                        <?php if ($sortable): ?>
+                            </a>
+                        <?php endif; ?>
+                    </th>
                 <?php endforeach; ?>
                 </tr>
             </thead>
