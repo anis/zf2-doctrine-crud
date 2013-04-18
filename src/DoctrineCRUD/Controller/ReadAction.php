@@ -30,6 +30,13 @@ trait ReadAction
     protected $entitiesPerPage = 10;
 
     /**
+     * Paging template
+     *
+     * @var string
+     */
+    protected $pagingTemplate = 'doctrine-crud/crud/read/paging';
+
+    /**
      * Read action
      *
      * Retrieves and passes to the view the appropriate entities, depending on the paging configuration.
@@ -104,7 +111,8 @@ trait ReadAction
             'fields'   => array_combine($fields, array_map(array($this, 'formatName'), $fields)),
             'sortableFields' => $this->sortableFields(),
             'currentSorting' => $sorting,
-            'entities' => $data
+            'entities' => $data,
+            'pagingTemplate' => 'doctrine-crud/crud/read/paging',
         );
     }
 

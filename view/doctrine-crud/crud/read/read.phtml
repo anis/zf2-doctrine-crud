@@ -1,7 +1,7 @@
 <div class="row">
 <?php if (count($this->entities) > 0): ?>
     <?php
-    echo $this->partial('doctrine-crud/crud/read/paging', array('currentPage' => $this->currentPage, 'totalPages' => $this->totalPages));
+    echo $this->partial($this->pagingTemplate, array('currentPage' => $this->currentPage, 'totalPages' => $this->totalPages));
     ?>
 
     <div class="span12">
@@ -40,7 +40,7 @@
         </table>
     </div>
 
-    <?php echo $this->partial('doctrine-crud/crud/read/paging', array('currentPage' => $this->currentPage, 'totalPages' => $this->totalPages)); ?>
+    <?php echo $this->partial($this->pagingTemplate, array('currentPage' => $this->currentPage, 'totalPages' => $this->totalPages)); ?>
 <?php else: ?>
     <div class="span12">
         <p><?php echo $this->translate('There is nothing yet in the database!'); ?></p>
